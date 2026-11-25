@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TransactionType {
+    INCOME
+    EXPENSE
+}
+
+enum Currency {
+    DOP
+    USD
+}
+
+model Transaction {
+    id          Int             @id @default(autoincrement())
+    type        TransactionType
+    amount      Decimal         @db.Decimal(12, 2)
+    currency    Currency        @default(DOP)
+    description String
+    date        DateTime        @default(now())
+    createdAt   DateTime        @default(now())
+    updatedAt   DateTime        @updatedAt
+}

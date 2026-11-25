@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import {transactionsRouter} from "./modules/transactions/transactions.routes";
 
 export function createApp() {
     const app = express();
@@ -15,6 +16,9 @@ export function createApp() {
             timestamp: new Date().toISOString(),
         });
     });
+    
+    // Rutas de transacciones
+    app.use("/api/transactions", transactionsRouter);
 
     return app;
 }

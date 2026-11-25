@@ -6,16 +6,17 @@ export const transactionsRouter = Router();
 
 function parseId(value: string) {
     const id = Number(value);
+
     return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 // GET /api/transactions: lista
-
-transactionsRouter.get("/", async (_req, res) => {
-
+transactionsRouter.get("/", async (req, res) => {
     const transactions = await prisma.transaction.findMany({
-        orderBy: {date: "desc"},
+        where: { userId: req.userId },
+        orderBy: { date: "desc" },
     });
+
     res.json(transactions);
 });
 
@@ -23,17 +24,17 @@ transactionsRouter.get("/", async (_req, res) => {
 transactionsRouter.get("/:id", async (req, res) => {
     const id = parseId(req.params.id);
 
-    if (!id){
-        res.status(400).json({ error: "ID inválido"});
+    if (!id) {
+        res.status(400).json({ error: "ID inválido" });
         return;
     }
 
-    const transaction = await prisma.transaction.findUnique({
-        where: {id},
+    const transaction = await prisma.transaction.findFirst({
+        where: { id, userId: req.userId },
     });
 
     if (!transaction) {
-        res.status(404).json({error: "Transacción no encontrada"});
+        res.status(404).json({ error: "Transacción no encontrada" });
         return;
     }
 
@@ -41,10 +42,10 @@ transactionsRouter.get("/:id", async (req, res) => {
 });
 
 // POST /api/transactions
-transactionsRouter.post("/", async(req, res) => {
+transactionsRouter.post("/", async (req, res) => {
     const result = createTransactionSchema.safeParse(req.body);
 
-    if(!result.success){
+    if (!result.success) {
         res.status(400).json({
             error: "Datos inválidos",
             details: result.error.issues,
@@ -53,18 +54,18 @@ transactionsRouter.post("/", async(req, res) => {
     }
 
     const transaction = await prisma.transaction.create({
-        data: result.data,
+        data: { ...result.data, userId: req.userId },
     });
 
     res.status(201).json(transaction);
 });
 
 // PATCH /api/transactions/:id
-
-transactionsRouter.patch("/:id", async(req, res) => {
+transactionsRouter.patch("/:id", async (req, res) => {
     const id = parseId(req.params.id);
+
     if (!id) {
-        res.status(400).json({error: "ID inválido"});
+        res.status(400).json({ error: "ID inválido" });
         return;
     }
 
@@ -78,17 +79,17 @@ transactionsRouter.patch("/:id", async(req, res) => {
         return;
     }
 
-    const existing = await prisma.transaction.findUnique({
-        where: {id},
+    const existing = await prisma.transaction.findFirst({
+        where: { id, userId: req.userId },
     });
-    
-    if (!existing){
-        res.status(404).json({error: "Transacción no encontrada"});
+
+    if (!existing) {
+        res.status(404).json({ error: "Transacción no encontrada" });
         return;
     }
 
     const transaction = await prisma.transaction.update({
-        where: {id},
+        where: { id },
         data: result.data,
     });
 
@@ -99,21 +100,21 @@ transactionsRouter.patch("/:id", async(req, res) => {
 transactionsRouter.delete("/:id", async (req, res) => {
     const id = parseId(req.params.id);
 
-    if (!id){
+    if (!id) {
         res.status(400).json({ error: "ID inválido" });
-        return;
-    } 
-
-    const existing = await prisma.transaction.findUnique({
-        where: {id},
-    });
-
-    if (!existing){
-        res.status(404).json({error: "Transacción no encontrada"});
         return;
     }
 
-    await prisma.transaction.delete({where: {id}});
-    res.status(204).send();
+    const existing = await prisma.transaction.findFirst({
+        where: { id, userId: req.userId },
+    });
 
+    if (!existing) {
+        res.status(404).json({ error: "Transacción no encontrada" });
+        return;
+    }
+
+    await prisma.transaction.delete({ where: { id } });
+
+    res.status(204).send();
 });

@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import {transactionsRouter} from "./modules/transactions/transactions.routes";
 import {authRouter} from "./modules/auth/auth.routes";
+import {requireAuth} from "./middleware/auth";
 
 export function createApp() {
     const app = express();
@@ -22,7 +23,7 @@ export function createApp() {
     app.use("/api/auth", authRouter);
     
     // Rutas de transacciones
-    app.use("/api/transactions", transactionsRouter);
+    app.use("/api/transactions", requireAuth, transactionsRouter);
 
     return app;
 }

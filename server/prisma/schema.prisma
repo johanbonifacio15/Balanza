@@ -7,6 +7,15 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+    id           Int           @id @default(autoincrement())
+    email        String        @unique
+    name         String
+    passwordHash String
+    createdAt    DateTime      @default(now())
+    transactions Transaction[]
+}
+
 enum TransactionType {
     INCOME
     EXPENSE
@@ -26,4 +35,8 @@ model Transaction {
     date        DateTime        @default(now())
     createdAt   DateTime        @default(now())
     updatedAt   DateTime        @updatedAt
+    userId      Int
+    user        User            @relation(fields: [userId], references: [id], onDelete: Cascade )
+
+    @@index([userId])
 }

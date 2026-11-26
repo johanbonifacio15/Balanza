@@ -33,15 +33,25 @@ type SummaryCardProps = {
     label: string;
     value: string;
     negative?: boolean;
+    wide?: boolean;
 };
 
-function SummaryCard({ label, value, negative = false }: SummaryCardProps) {
+function SummaryCard({
+    label,
+    value,
+    negative = false,
+    wide = false,
+}: SummaryCardProps) {
     return (
-        <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-            <p className="text-xs text-slate-500">{label}</p>
+        <div
+            className={`min-w-0 rounded-xl bg-surface p-4 shadow-sm ring-1 ring-border ${
+                wide ? "col-span-2 sm:col-span-1" : ""
+            }`}
+        >
+            <p className="text-xs text-muted">{label}</p>
             <p
-                className={`mt-1 text-lg font-semibold ${
-                    negative ? "text-red-600" : "text-slate-900"
+                className={`mt-1 break-words text-base font-semibold sm:text-lg ${
+                    negative ? "text-expense" : "text-foreground"
                 }`}
             >
                 {value}
@@ -64,11 +74,11 @@ export function Summary({ transactions }: { transactions: Transaction[] }) {
 
                 return (
                     <div key={currency}>
-                        <h2 className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                        <h2 className="text-xs font-medium uppercase tracking-wide text-muted">
                             Resumen en {currency}
                         </h2>
 
-                        <div className="mt-2 grid grid-cols-3 gap-3">
+                        <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
                             <SummaryCard
                                 label="Ingresos"
                                 value={formatMoney(totals.income, currency)}
@@ -81,6 +91,7 @@ export function Summary({ transactions }: { transactions: Transaction[] }) {
                                 label="Balance"
                                 value={formatMoney(totals.balance, currency)}
                                 negative={totals.balance < 0}
+                                wide
                             />
                         </div>
                     </div>

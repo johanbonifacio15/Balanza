@@ -1,7 +1,15 @@
-import {formatMoney} from "../lib/format";
-import type {Currency, Transaction} from "../types";
+import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import type { ReactNode } from "react";
+import { formatMoney } from "../lib/format";
+import type { Currency, Transaction } from "../types";
 
 const CURRENCIES: Currency[] = ["DOP", "USD"];
+
+const TONES = {
+    income: "bg-income/10 text-income",
+    expense: "bg-expense/10 text-expense",
+    balance: "bg-primary/10 text-primary dark:text-indigo-300",
+};
 
 // Suma en centavos para evitar errores de redondeo con decimales
 function getTotals(transactions: Transaction[], currency: Currency) {
@@ -32,6 +40,8 @@ function getTotals(transactions: Transaction[], currency: Currency) {
 type SummaryCardProps = {
     label: string;
     value: string;
+    icon: ReactNode;
+    tone: keyof typeof TONES;
     negative?: boolean;
     wide?: boolean;
 };
@@ -39,18 +49,32 @@ type SummaryCardProps = {
 function SummaryCard({
     label,
     value,
+    icon,
+    tone,
     negative = false,
     wide = false,
 }: SummaryCardProps) {
     return (
         <div
-            className={`min-w-0 rounded-xl bg-surface p-4 shadow-sm ring-1 ring-border ${
+            className={`glass min-w-0 rounded-2xl p-4 transition hover:-translate-y-0.5 ${
                 wide ? "col-span-2 sm:col-span-1" : ""
+            } ${
+                tone === "balance"
+                    ? "bg-linear-to-br from-primary/15 to-violet-500/10"
+                    : ""
             }`}
         >
-            <p className="text-xs text-muted">{label}</p>
+            <div className="flex items-center gap-2">
+                <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${TONES[tone]}`}
+                >
+                    {icon}
+                </span>
+                <p className="text-xs text-muted">{label}</p>
+            </div>
+
             <p
-                className={`mt-1 break-words text-base font-semibold sm:text-lg ${
+                className={`mt-3 break-words text-base font-semibold tabular-nums sm:text-lg ${
                     negative ? "text-expense" : "text-foreground"
                 }`}
             >
@@ -82,14 +106,20 @@ export function Summary({ transactions }: { transactions: Transaction[] }) {
                             <SummaryCard
                                 label="Ingresos"
                                 value={formatMoney(totals.income, currency)}
+                                icon={<TrendingUp size={16} />}
+                                tone="income"
                             />
                             <SummaryCard
                                 label="Gastos"
                                 value={formatMoney(totals.expense, currency)}
+                                icon={<TrendingDown size={16} />}
+                                tone="expense"
                             />
                             <SummaryCard
                                 label="Balance"
                                 value={formatMoney(totals.balance, currency)}
+                                icon={<Wallet size={16} />}
+                                tone="balance"
                                 negative={totals.balance < 0}
                                 wide
                             />

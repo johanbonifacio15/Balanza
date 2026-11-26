@@ -13,7 +13,8 @@ model User {
     name         String
     passwordHash String
     createdAt    DateTime      @default(now())
-    transactions Transaction[]
+    transactions Transaction[] 
+    categories   Category[] 
 }
 
 enum TransactionType {
@@ -37,6 +38,20 @@ model Transaction {
     updatedAt   DateTime        @updatedAt
     userId      Int
     user        User            @relation(fields: [userId], references: [id], onDelete: Cascade )
+    categoryId  Int?
+    category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
     @@index([userId])
+}
+
+model Category {
+    id           Int           @id @default(autoincrement())
+    name         String
+    color        String        @default("#6366f1")
+    createdAt    DateTime      @default(now())
+    userId       Int
+    user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    transactions Transaction[]
+
+    @@unique([userId, name])
 }

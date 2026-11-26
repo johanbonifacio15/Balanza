@@ -4,6 +4,7 @@ import {prisma} from "../../lib/prisma";
 import {signToken} from "../../lib/jwt";
 import { requireAuth } from "../../middleware/auth";
 import { loginSchema, registerSchema } from "./auth.schemas";
+import { DEFAULT_CATEGORIES } from "../categories/default-categories";
 
 export const authRouter = Router();
 
@@ -34,7 +35,12 @@ authRouter.post("/register", async(req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-        data: {name, email, passwordHash},
+        data: {
+            name, 
+            email, 
+            passwordHash,
+            categories: { create: DEFAULT_CATEGORIES }, 
+        },
         select: {id: true, name: true, email: true},
     });
 

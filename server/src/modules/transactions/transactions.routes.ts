@@ -1,19 +1,37 @@
-import {Router} from "express";
-import {prisma} from "../../lib/prisma";
-import {createTransactionSchema, updateTransactionSchema} from "./transactions.schemas";
+import { Router } from "express";
+import { parseId } from "../../lib/parseId";
+import { prisma } from "../../lib/prisma";
+import {
+    createTransactionSchema,
+    updateTransactionSchema,
+} from "./transactions.schemas";
 
 export const transactionsRouter = Router();
 
-function parseId(value: string) {
-    const id = Number(value);
+const withCategory = {
+    category: { select: { id: true, name: true, color: true } },
+} as const;
 
-    return Number.isInteger(id) && id > 0 ? id : null;
+async function categoryBelongsToUser(
+    categoryId: number | null | undefined,
+    userId: number,
+) {
+    if (categoryId === null || categoryId === undefined) {
+        return true;
+    }
+
+    const category = await prisma.category.findFirst({
+        where: { id: categoryId, userId },
+    });
+
+    return category !== null;
 }
 
 // GET /api/transactions: lista
 transactionsRouter.get("/", async (req, res) => {
     const transactions = await prisma.transaction.findMany({
         where: { userId: req.userId },
+        include: withCategory,
         orderBy: { date: "desc" },
     });
 
@@ -31,6 +49,7 @@ transactionsRouter.get("/:id", async (req, res) => {
 
     const transaction = await prisma.transaction.findFirst({
         where: { id, userId: req.userId },
+        include: withCategory,
     });
 
     if (!transaction) {
@@ -53,8 +72,14 @@ transactionsRouter.post("/", async (req, res) => {
         return;
     }
 
+    if (!(await categoryBelongsToUser(result.data.categoryId, req.userId))) {
+        res.status(400).json({ error: "Categoría inválida" });
+        return;
+    }
+
     const transaction = await prisma.transaction.create({
         data: { ...result.data, userId: req.userId },
+        include: withCategory,
     });
 
     res.status(201).json(transaction);
@@ -79,6 +104,11 @@ transactionsRouter.patch("/:id", async (req, res) => {
         return;
     }
 
+    if (!(await categoryBelongsToUser(result.data.categoryId, req.userId))) {
+        res.status(400).json({ error: "Categoría inválida" });
+        return;
+    }
+
     const existing = await prisma.transaction.findFirst({
         where: { id, userId: req.userId },
     });
@@ -91,6 +121,7 @@ transactionsRouter.patch("/:id", async (req, res) => {
     const transaction = await prisma.transaction.update({
         where: { id },
         data: result.data,
+        include: withCategory,
     });
 
     res.json(transaction);

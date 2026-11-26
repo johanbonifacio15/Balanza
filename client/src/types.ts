@@ -7,10 +7,25 @@ export type User = {
 export type AuthResponse = {
     user: User;
     token: string;
-}
+};
 
 export type TransactionType = "INCOME" | "EXPENSE";
 export type Currency = "DOP" | "USD";
+
+export type Category = {
+    id: number;
+    name: string;
+    color: string;
+    createdAt: string;
+    userId: number;
+};
+
+export type NewCategory = {
+    name: string;
+    color: string;
+};
+
+export type TransactionCategory = Pick<Category, "id" | "name" | "color">;
 
 export type Transaction = {
     id: number;
@@ -22,6 +37,8 @@ export type Transaction = {
     createdAt: string;
     updatedAt: string;
     userId: number;
+    categoryId: number | null;
+    category: TransactionCategory | null;
 };
 
 export type NewTransaction = {
@@ -30,4 +47,5 @@ export type NewTransaction = {
     currency: Currency;
     description: string;
     date: string;
+    categoryId: number | null;
 };

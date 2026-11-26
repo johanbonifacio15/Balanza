@@ -1,10 +1,8 @@
-import {useState} from "react";
-import type {FormEvent} from "react";
-import {useCreateTransaction} from "../hooks/useTransactions";
-import type {Currency, TransactionType} from "../types";
-
-const fieldClass =
-    "mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm outline-none focus:border-primary";
+import { useState } from "react";
+import type { FormEvent } from "react";
+import { useCreateTransaction } from "../hooks/useTransactions";
+import { fieldClass, primaryButtonClass } from "../lib/styles";
+import type { Currency, TransactionType } from "../types";
 
 // Fecha de hoy en formato AAAA-MM-DD segun la hora local
 function today() {
@@ -37,7 +35,7 @@ export function TransactionForm() {
     return (
         <form
             onSubmit={handleSubmit}
-            className="rounded-xl bg-surface p-5 shadow-sm ring-1 ring-border"
+            className="glass rounded-2xl p-5"
         >
             <h2 className="text-sm font-semibold text-foreground">
                 Nueva transacción
@@ -116,7 +114,7 @@ export function TransactionForm() {
             <button
                 type="submit"
                 disabled={createTransaction.isPending}
-                className="mt-5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
+                className={`${primaryButtonClass} mt-5`}
             >
                 {createTransaction.isPending ? "Guardando..." : "Guardar"}
             </button>

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link, Navigate } from "react-router";
+import { AuthLayout } from "../components/AuthLayout";
 import { useAuth } from "../context/authContext";
+import { fieldClass, primaryButtonClass } from "../lib/styles";
 
 export function LoginPage() {
     const { user, login } = useAuth();
@@ -30,60 +32,53 @@ export function LoginPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-background px-4">
-            <form
-                onSubmit={handleSubmit}
-                className="w-full max-w-sm rounded-xl bg-surface p-8 shadow-sm ring-1 ring-border"
-            >
-                <h1 className="text-2xl font-semibold text-foreground">
-                    Iniciar sesión
-                </h1>
-                <p className="mt-1 text-sm text-muted">
-                    Entra a tu cuenta de Balanza.
-                </p>
-
-                <label className="mt-6 block text-sm font-medium text-foreground">
+        <AuthLayout
+            title="Iniciar sesión"
+            subtitle="Entra a tu cuenta de Balanza."
+        >
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <label className="block text-sm font-medium">
                     Correo
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm outline-none focus:border-primary"
+                        className={fieldClass}
                     />
                 </label>
 
-                <label className="mt-4 block text-sm font-medium text-foreground">
+                <label className="block text-sm font-medium">
                     Contraseña
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm outline-none focus:border-primary"
+                        className={fieldClass}
                     />
                 </label>
 
-                {error && <p className="mt-4 text-sm text-expense">{error}</p>}
+                {error && <p className="text-sm text-expense">{error}</p>}
 
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="mt-6 w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
+                    className={`${primaryButtonClass} w-full`}
                 >
                     {submitting ? "Entrando..." : "Entrar"}
                 </button>
-
-                <p className="mt-4 text-center text-sm text-muted">
-                    ¿No tienes cuenta?{" "}
-                    <Link
-                        to="/register"
-                        className="font-medium text-foreground hover:underline"
-                    >
-                        Regístrate
-                    </Link>
-                </p>
             </form>
-        </main>
+
+            <p className="mt-6 text-center text-sm text-muted">
+                ¿No tienes cuenta?{" "}
+                <Link
+                    to="/register"
+                    className="font-medium text-foreground hover:underline"
+                >
+                    Regístrate
+                </Link>
+            </p>
+        </AuthLayout>
     );
 }

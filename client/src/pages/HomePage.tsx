@@ -1,7 +1,12 @@
-import { useAuth } from "../context/authContext";
+import {Summary} from "../components/Summary";
+import {TransactionForm} from "../components/TransactionForm";
+import {TransactionList} from "../components/TransactionList";
+import {useAuth} from "../context/authContext";
+import {useTransactions} from "../hooks/useTransactions";
 
 export function HomePage() {
     const { user, logout } = useAuth();
+    const { data: transactions, isPending, error } = useTransactions();
 
     return (
         <main className="mx-auto max-w-3xl px-4 py-10">
@@ -17,9 +22,26 @@ export function HomePage() {
                 </button>
             </header>
 
-            <p className="mt-6 text-sm text-slate-500">
-                Aquí van a aparecer tus transacciones.
-            </p>
+            <div className="mt-8 space-y-8">
+                {isPending && (
+                    <p className="text-sm text-slate-500">Cargando...</p>
+                )}
+
+                {error && <p className="text-sm text-red-600">{error.message}</p>}
+
+                {transactions && <Summary transactions={transactions} />}
+
+                <TransactionForm />
+
+                {transactions && (
+                    <section>
+                        <h2 className="mb-3 text-sm font-semibold text-slate-900">
+                            Movimientos
+                        </h2>
+                        <TransactionList transactions={transactions} />
+                    </section>
+                )}
+            </div>
         </main>
     );
 }

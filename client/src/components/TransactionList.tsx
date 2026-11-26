@@ -17,14 +17,14 @@ export function TransactionList({
 
     if (transactions.length === 0) {
         return (
-            <p className="rounded-xl bg-white p-6 text-center text-sm text-slate-500 ring-1 ring-slate-200">
+            <p className="rounded-xl bg-surface p-6 text-center text-sm text-muted ring-1 ring-border">
                 Todavía no tienes transacciones. Agrega la primera arriba.
             </p>
         );
     }
 
     return (
-        <ul className="divide-y divide-slate-200 rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
+        <ul className="divide-y divide-border rounded-xl bg-surface shadow-sm ring-1 ring-border">
             {transactions.map((transaction) => {
                 const isIncome = transaction.type === "INCOME";
 
@@ -34,10 +34,10 @@ export function TransactionList({
                         className="flex items-center justify-between gap-4 px-4 py-3"
                     >
                         <div className="min-w-0">
-                            <p className="truncate text-sm font-medium text-slate-900">
+                            <p className="truncate text-sm font-medium text-foreground">
                                 {transaction.description}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted">
                                 {formatDate(transaction.date)}
                             </p>
                         </div>
@@ -45,7 +45,7 @@ export function TransactionList({
                         <div className="flex shrink-0 items-center gap-4">
                             <span
                                 className={`text-sm font-medium ${
-                                    isIncome ? "text-emerald-600" : "text-red-600"
+                                    isIncome ? "text-income" : "text-expense"
                                 }`}
                             >
                                 {isIncome ? "+" : "-"}
@@ -57,7 +57,7 @@ export function TransactionList({
 
                             <button
                                 onClick={() => handleDelete(transaction.id)}
-                                className="text-xs text-slate-400 hover:text-red-600"
+                                className="text-xs text-muted hover:text-expense"
                             >
                                 Eliminar
                             </button>

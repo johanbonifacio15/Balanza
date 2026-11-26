@@ -4,7 +4,7 @@ import {useCreateTransaction} from "../hooks/useTransactions";
 import type {Currency, TransactionType} from "../types";
 
 const fieldClass =
-    "mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900";
+    "mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm outline-none focus:border-primary";
 
 // Fecha de hoy en formato AAAA-MM-DD segun la hora local
 function today() {
@@ -37,14 +37,14 @@ export function TransactionForm() {
     return (
         <form
             onSubmit={handleSubmit}
-            className="rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
+            className="rounded-xl bg-surface p-5 shadow-sm ring-1 ring-border"
         >
-            <h2 className="text-sm font-semibold text-slate-900">
+            <h2 className="text-sm font-semibold text-foreground">
                 Nueva transacción
             </h2>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Tipo
                     <select
                         value={type}
@@ -58,7 +58,7 @@ export function TransactionForm() {
                     </select>
                 </label>
 
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Moneda
                     <select
                         value={currency}
@@ -70,7 +70,7 @@ export function TransactionForm() {
                     </select>
                 </label>
 
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Monto
                     <input
                         type="number"
@@ -83,7 +83,7 @@ export function TransactionForm() {
                     />
                 </label>
 
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-foreground">
                     Fecha
                     <input
                         type="date"
@@ -94,7 +94,7 @@ export function TransactionForm() {
                     />
                 </label>
 
-                <label className="block text-sm font-medium text-slate-700 sm:col-span-2">
+                <label className="block text-sm font-medium text-foreground sm:col-span-2">
                     Descripción
                     <input
                         type="text"
@@ -108,7 +108,7 @@ export function TransactionForm() {
             </div>
 
             {createTransaction.isError && (
-                <p className="mt-4 text-sm text-red-600">
+                <p className="mt-4 text-sm text-expense">
                     {createTransaction.error.message}
                 </p>
             )}
@@ -116,7 +116,7 @@ export function TransactionForm() {
             <button
                 type="submit"
                 disabled={createTransaction.isPending}
-                className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                className="mt-5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
             >
                 {createTransaction.isPending ? "Guardando..." : "Guardar"}
             </button>

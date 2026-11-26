@@ -30,55 +30,55 @@ export function LoginPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+        <main className="flex min-h-screen items-center justify-center bg-background px-4">
             <form
                 onSubmit={handleSubmit}
-                className="w-full max-w-sm rounded-xl bg-white p-8 shadow-sm ring-1 ring-slate-200"
+                className="w-full max-w-sm rounded-xl bg-surface p-8 shadow-sm ring-1 ring-border"
             >
-                <h1 className="text-2xl font-semibold text-slate-900">
+                <h1 className="text-2xl font-semibold text-foreground">
                     Iniciar sesión
                 </h1>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-muted">
                     Entra a tu cuenta de Balanza.
                 </p>
 
-                <label className="mt-6 block text-sm font-medium text-slate-700">
+                <label className="mt-6 block text-sm font-medium text-foreground">
                     Correo
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+                        className="mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm outline-none focus:border-primary"
                     />
                 </label>
 
-                <label className="mt-4 block text-sm font-medium text-slate-700">
+                <label className="mt-4 block text-sm font-medium text-foreground">
                     Contraseña
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-900"
+                        className="mt-1 w-full rounded-lg border border-border bg-background text-foreground px-3 py-2 text-sm outline-none focus:border-primary"
                     />
                 </label>
 
-                {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+                {error && <p className="mt-4 text-sm text-expense">{error}</p>}
 
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="mt-6 w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                    className="mt-6 w-full rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-hover disabled:opacity-50"
                 >
                     {submitting ? "Entrando..." : "Entrar"}
                 </button>
 
-                <p className="mt-4 text-center text-sm text-slate-500">
+                <p className="mt-4 text-center text-sm text-muted">
                     ¿No tienes cuenta?{" "}
                     <Link
                         to="/register"
-                        className="font-medium text-slate-900 hover:underline"
+                        className="font-medium text-foreground hover:underline"
                     >
                         Regístrate
                     </Link>

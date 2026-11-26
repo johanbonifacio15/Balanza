@@ -5,6 +5,7 @@ import {
     createCategorySchema,
     updateCategorySchema,
 } from "./categories.schemas";
+import { DEFAULT_CATEGORIES } from "./default-categories";
 
 export const categoriesRouter = Router();
 
@@ -48,6 +49,35 @@ categoriesRouter.post("/", async (req, res) => {
     });
 
     res.status(201).json(category);
+});
+
+// POST /api/categories/defaults
+categoriesRouter.post("/defaults", async (req, res) => {
+    const existing = await prisma.category.findMany({
+        where: { userId: req.userId },
+        select: { name: true },
+    });
+
+    const names = new Set(existing.map((category) => category.name.toLowerCase()));
+    const missing = DEFAULT_CATEGORIES.filter(
+        (category) => !names.has(category.name.toLowerCase()),
+    );
+
+    if (missing.length > 0) {
+        await prisma.category.createMany({
+            data: missing.map((category) => ({
+                ...category,
+                userId: req.userId,
+            })),
+        });
+    }
+
+    const categories = await prisma.category.findMany({
+        where: { userId: req.userId },
+        orderBy: { name: "asc" },
+    });
+
+    res.status(201).json(categories);
 });
 
 // PATCH /api/categories/:id

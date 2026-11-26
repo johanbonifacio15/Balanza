@@ -1,7 +1,16 @@
-import { LogOut } from "lucide-react";
+import { LayoutList, LogOut, Tags } from "lucide-react";
+import { NavLink } from "react-router";
 import { useAuth } from "../context/authContext";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
+
+function linkClass({ isActive }: { isActive: boolean }) {
+    return `flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm font-medium transition-colors ${
+        isActive
+            ? "bg-primary/10 text-foreground"
+            : "text-muted hover:text-foreground"
+    }`;
+}
 
 export function Navbar() {
     const { user, logout } = useAuth();
@@ -11,8 +20,29 @@ export function Navbar() {
             <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
                 <Logo />
 
+                <nav className="flex items-center gap-1">
+                    <NavLink
+                        to="/"
+                        end
+                        aria-label="Movimientos"
+                        className={linkClass}
+                    >
+                        <LayoutList size={18} />
+                        <span className="hidden sm:inline">Movimientos</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/categories"
+                        aria-label="Categorías"
+                        className={linkClass}
+                    >
+                        <Tags size={18} />
+                        <span className="hidden sm:inline">Categorías</span>
+                    </NavLink>
+                </nav>
+
                 <div className="flex items-center gap-1">
-                    <span className="mr-2 hidden text-sm text-muted sm:block">
+                    <span className="mr-2 hidden text-sm text-muted md:block">
                         {user?.name}
                     </span>
 

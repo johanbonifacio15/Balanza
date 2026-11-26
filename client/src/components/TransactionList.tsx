@@ -2,6 +2,7 @@ import { ArrowDownLeft, ArrowUpRight, Inbox, Trash2 } from "lucide-react";
 import { useDeleteTransaction } from "../hooks/useTransactions";
 import { formatDate, formatMoney } from "../lib/format";
 import type { Transaction } from "../types";
+import { CategoryBadge } from "./CategoryBadge";
 
 export function TransactionList({
     transactions,
@@ -60,9 +61,17 @@ export function TransactionList({
                             <p className="truncate text-sm font-medium">
                                 {transaction.description}
                             </p>
-                            <p className="text-xs text-muted">
-                                {formatDate(transaction.date)}
-                            </p>
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                <p className="text-xs text-muted">
+                                    {formatDate(transaction.date)}
+                                </p>
+                                {transaction.category && (
+                                    <CategoryBadge
+                                        name={transaction.category.name}
+                                        color={transaction.category.color}
+                                    />
+                                )}
+                            </div>
                         </div>
 
                         <span

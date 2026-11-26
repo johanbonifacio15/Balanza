@@ -1,28 +1,39 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { useCategories } from "../hooks/useCategories";
 import { useCreateTransaction } from "../hooks/useTransactions";
 import { fieldClass, primaryButtonClass } from "../lib/styles";
 import type { Currency, TransactionType } from "../types";
 
-// Fecha de hoy en formato AAAA-MM-DD segun la hora local
+// Fecha de hoy en formato AAAA-MM-DD según la hora local
 function today() {
     return new Date().toLocaleDateString("en-CA");
 }
 
 export function TransactionForm() {
     const createTransaction = useCreateTransaction();
+    const { data: categories } = useCategories();
 
     const [type, setType] = useState<TransactionType>("EXPENSE");
     const [amount, setAmount] = useState("");
     const [currency, setCurrency] = useState<Currency>("DOP");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState(today);
+    // Texto vacío significa "sin categoría"
+    const [categoryId, setCategoryId] = useState("");
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         createTransaction.mutate(
-            { type, amount: Number(amount), currency, description, date },
+            {
+                type,
+                amount: Number(amount),
+                currency,
+                description,
+                date,
+                categoryId: categoryId ? Number(categoryId) : null,
+            },
             {
                 onSuccess: () => {
                     setAmount("");
@@ -92,7 +103,7 @@ export function TransactionForm() {
                     />
                 </label>
 
-                <label className="block text-sm font-medium text-foreground sm:col-span-2">
+                <label className="block text-sm font-medium text-foreground">
                     Descripción
                     <input
                         type="text"
@@ -102,6 +113,22 @@ export function TransactionForm() {
                         maxLength={120}
                         className={fieldClass}
                     />
+                </label>
+
+                <label className="block text-sm font-medium text-foreground">
+                    Categoría
+                    <select
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                        className={fieldClass}
+                    >
+                        <option value="">Sin categoría</option>
+                        {categories?.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </select>
                 </label>
             </div>
 

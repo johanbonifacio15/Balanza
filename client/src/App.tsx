@@ -4,6 +4,7 @@ import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { AppLayout } from "./components/AppLayout";
+import { CategoriesPage } from "./pages/CategoriesPage";
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/categories" element={<CategoriesPage />} />
                 </Route>
             </Route>
         </Routes>

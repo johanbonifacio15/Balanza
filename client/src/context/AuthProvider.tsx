@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
-import type { ReactNode } from "react";
-import { api, clearToken, getToken, saveToken } from "../lib/api";
-import type { AuthResponse, User } from "../types";
-import { AuthContext } from "./authContext";
+import {useEffect, useState} from "react";
+import type {ReactNode} from "react";
+import {api, clearToken, getToken, saveToken} from "../lib/api";
+import type {AuthResponse, User} from "../types";
+import {AuthContext} from "./authContext";
+import {useQueryClient} from "@tanstack/react-query";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
 
     const [loading, setLoading] = useState(() => getToken() !== null);
-
+    
+    const queryClient = useQueryClient();
+    
     useEffect(() => {
         if (!getToken()) {
             return;
@@ -44,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     function logout() {
         clearToken();
         setUser(null);
+        queryClient.clear();
     }
 
     return (

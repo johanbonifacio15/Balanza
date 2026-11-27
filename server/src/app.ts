@@ -4,6 +4,7 @@ import { transactionsRouter } from "./modules/transactions/transactions.routes";
 import { authRouter } from "./modules/auth/auth.routes";
 import { categoriesRouter } from "./modules/categories/categories.routes";
 import { requireAuth } from "./middleware/auth";
+import { budgetsRouter } from "./modules/budgets/budgets.routes";
 
 export function createApp() {
     const app = express();
@@ -25,6 +26,7 @@ export function createApp() {
     // Rutas protegidas (requieren token)
     app.use("/api/transactions", requireAuth, transactionsRouter);
     app.use("/api/categories", requireAuth, categoriesRouter);
+    app.use("/api/budgets", requireAuth, budgetsRouter);
 
     return app;
 }

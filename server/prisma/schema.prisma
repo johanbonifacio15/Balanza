@@ -15,6 +15,7 @@ model User {
     createdAt    DateTime      @default(now())
     transactions Transaction[] 
     categories   Category[] 
+    budgets      Budget[]
 }
 
 enum TransactionType {
@@ -52,6 +53,21 @@ model Category {
     userId       Int
     user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
     transactions Transaction[]
+    budgets      Budget[]
 
     @@unique([userId, name])
+}
+
+model Budget {
+    id         Int      @id @default(autoincrement())
+    // Limite mensual
+    amount     Decimal  @db.Decimal(12, 2)
+    currency   Currency @default(DOP)
+    createdAt  DateTime @default(now())
+    userId     Int
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    categoryId Int
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    @@unique([userId, categoryId, currency])
 }

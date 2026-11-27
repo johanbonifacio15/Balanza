@@ -32,7 +32,7 @@ transactionsRouter.get("/", async (req, res) => {
     const transactions = await prisma.transaction.findMany({
         where: { userId: req.userId },
         include: withCategory,
-        orderBy: { date: "desc" },
+        orderBy: [{ date: "desc" }, { id: "desc" }],
     });
 
     res.json(transactions);

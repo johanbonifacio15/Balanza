@@ -49,3 +49,20 @@ export type NewTransaction = {
     date: string;
     categoryId: number | null;
 };
+
+export type Budget = {
+    id: number;
+    amount: string;
+    currency: Currency;
+    createdAt: string;
+    userId: number;
+    categoryId: number;
+    category: TransactionCategory;
+    spent: string;
+};
+
+export type NewBudget = {
+    categoryId: number;
+    amount: number;
+    currency: Currency;
+};

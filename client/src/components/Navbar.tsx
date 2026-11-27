@@ -1,4 +1,4 @@
-import { LayoutList, LogOut, Tags } from "lucide-react";
+import { LayoutList, LogOut, PiggyBank, Tags } from "lucide-react";
 import { NavLink } from "react-router";
 import { useAuth } from "../context/authContext";
 import { Logo } from "./Logo";
@@ -38,6 +38,15 @@ export function Navbar() {
                     >
                         <Tags size={18} />
                         <span className="hidden sm:inline">Categorías</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/budgets"
+                        aria-label="Presupuestos"
+                        className={linkClass}
+                    >
+                        <PiggyBank size={18} />
+                        <span className="hidden sm:inline">Presupuestos</span>
                     </NavLink>
                 </nav>
 

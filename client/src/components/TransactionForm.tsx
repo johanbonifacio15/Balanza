@@ -1,58 +1,100 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useCategories } from "../hooks/useCategories";
-import { useCreateTransaction } from "../hooks/useTransactions";
+import {
+    useCreateTransaction,
+    useUpdateTransaction,
+} from "../hooks/useTransactions";
 import { fieldClass, primaryButtonClass } from "../lib/styles";
-import type { Currency, TransactionType } from "../types";
+import type {
+    Currency,
+    NewTransaction,
+    Transaction,
+    TransactionType,
+} from "../types";
 
-// Fecha de hoy en formato AAAA-MM-DD según la hora local
 function today() {
     return new Date().toLocaleDateString("en-CA");
 }
 
-export function TransactionForm() {
+type TransactionFormProps = {
+    transaction?: Transaction;
+    onDone?: () => void;
+    bare?: boolean;
+};
+
+export function TransactionForm({
+    transaction,
+    onDone,
+    bare = false,
+}: TransactionFormProps) {
     const createTransaction = useCreateTransaction();
+    const updateTransaction = useUpdateTransaction();
     const { data: categories } = useCategories();
 
-    const [type, setType] = useState<TransactionType>("EXPENSE");
-    const [amount, setAmount] = useState("");
-    const [currency, setCurrency] = useState<Currency>("DOP");
-    const [description, setDescription] = useState("");
-    const [date, setDate] = useState(today);
-    // Texto vacío significa "sin categoría"
-    const [categoryId, setCategoryId] = useState("");
+    const [type, setType] = useState<TransactionType>(
+        transaction?.type ?? "EXPENSE",
+    );
+    const [amount, setAmount] = useState(transaction?.amount ?? "");
+    const [currency, setCurrency] = useState<Currency>(
+        transaction?.currency ?? "DOP",
+    );
+    const [description, setDescription] = useState(
+        transaction?.description ?? "",
+    );
+    const [date, setDate] = useState(() =>
+        transaction ? transaction.date.slice(0, 10) : today(),
+    );
+    const [categoryId, setCategoryId] = useState(
+        transaction?.categoryId ? String(transaction.categoryId) : "",
+    );
+
+    const isPending = createTransaction.isPending || updateTransaction.isPending;
+    const error = createTransaction.error ?? updateTransaction.error;
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        createTransaction.mutate(
-            {
-                type,
-                amount: Number(amount),
-                currency,
-                description,
-                date,
-                categoryId: categoryId ? Number(categoryId) : null,
+        const data: NewTransaction = {
+            type,
+            amount: Number(amount),
+            currency,
+            description,
+            date,
+            categoryId: categoryId ? Number(categoryId) : null,
+        };
+
+        if (transaction) {
+            updateTransaction.mutate(
+                { id: transaction.id, data },
+                { onSuccess: onDone },
+            );
+            return;
+        }
+
+        createTransaction.mutate(data, {
+            onSuccess: () => {
+                setAmount("");
+                setDescription("");
+                onDone?.();
             },
-            {
-                onSuccess: () => {
-                    setAmount("");
-                    setDescription("");
-                },
-            },
-        );
+        });
     }
 
     return (
         <form
             onSubmit={handleSubmit}
-            className="glass rounded-2xl p-5"
+            className={bare ? "" : "glass rounded-2xl p-5"}
         >
-            <h2 className="text-sm font-semibold text-foreground">
-                Nueva transacción
-            </h2>
+            {!bare && (
+                <h2 className="text-sm font-semibold text-foreground">
+                    {transaction ? "Editar transacción" : "Nueva transacción"}
+                </h2>
+            )}
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div
+                className={`grid gap-4 sm:grid-cols-2 ${bare ? "" : "mt-4"}`}
+            >
                 <label className="block text-sm font-medium text-foreground">
                     Tipo
                     <select
@@ -132,18 +174,20 @@ export function TransactionForm() {
                 </label>
             </div>
 
-            {createTransaction.isError && (
-                <p className="mt-4 text-sm text-expense">
-                    {createTransaction.error.message}
-                </p>
+            {error && (
+                <p className="mt-4 text-sm text-expense">{error.message}</p>
             )}
 
             <button
                 type="submit"
-                disabled={createTransaction.isPending}
+                disabled={isPending}
                 className={`${primaryButtonClass} mt-5`}
             >
-                {createTransaction.isPending ? "Guardando..." : "Guardar"}
+                {isPending
+                    ? "Guardando..."
+                    : transaction
+                      ? "Guardar cambios"
+                      : "Guardar"}
             </button>
         </form>
     );

@@ -76,7 +76,7 @@ export function TransactionList({
                             </span>
 
                             <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-medium">
+                                <p className="break-words text-sm font-medium">
                                     {transaction.description}
                                 </p>
                                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">

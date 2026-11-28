@@ -5,6 +5,7 @@ import { authRouter } from "./modules/auth/auth.routes";
 import { categoriesRouter } from "./modules/categories/categories.routes";
 import { requireAuth } from "./middleware/auth";
 import { budgetsRouter } from "./modules/budgets/budgets.routes";
+import { statsRouter } from "./modules/stats/stats.routes";
 
 export function createApp() {
     const app = express();
@@ -27,6 +28,7 @@ export function createApp() {
     app.use("/api/transactions", requireAuth, transactionsRouter);
     app.use("/api/categories", requireAuth, categoriesRouter);
     app.use("/api/budgets", requireAuth, budgetsRouter);
+    app.use("/api/stats", requireAuth, statsRouter);
 
     return app;
 }

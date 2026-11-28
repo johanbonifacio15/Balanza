@@ -6,6 +6,7 @@ import {
     monthQuerySchema,
     updateBudgetSchema,
 } from "./budgets.schemas";
+import { getMonthRange } from "../../lib/months";
 
 export const budgetsRouter = Router();
 
@@ -13,19 +14,6 @@ export const budgetsRouter = Router();
 const withCategory = {
     category: { select: { id: true, name: true, color: true } },
 } as const;
-
-function getMonthRange(month?: string) {
-    const now = new Date();
-    const year = month ? Number(month.slice(0, 4)) : now.getUTCFullYear();
-    const monthNumber = month
-        ? Number(month.slice(5, 7))
-        : now.getUTCMonth() + 1;
-
-    return {
-        start: new Date(Date.UTC(year, monthNumber - 1, 1)),
-        end: new Date(Date.UTC(year, monthNumber, 1)),
-    };
-}
 
 // GET /api/budgets
 budgetsRouter.get("/", async (req, res) => {

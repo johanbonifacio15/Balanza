@@ -1,13 +1,40 @@
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {api} from "../lib/api";
-import type {NewTransaction, Transaction} from "../types";
+import {
+    keepPreviousData,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from "@tanstack/react-query";
+import { api } from "../lib/api";
+import type {
+    NewTransaction,
+    Transaction,
+    TransactionFilters,
+} from "../types";
 
 const QUERY_KEY = ["transactions"];
 
-export function useTransactions() {
+export const EMPTY_FILTERS: TransactionFilters = {
+    type: "",
+    categoryId: "",
+    from: "",
+    to: "",
+};
+
+export function useTransactions(filters: TransactionFilters = EMPTY_FILTERS) {
+    const params = new URLSearchParams();
+
+    if (filters.type) params.set("type", filters.type);
+    if (filters.categoryId) params.set("categoryId", filters.categoryId);
+    if (filters.from) params.set("from", filters.from);
+    if (filters.to) params.set("to", filters.to);
+
+    const query = params.toString();
+
     return useQuery({
-        queryKey: QUERY_KEY,
-        queryFn: () => api<Transaction[]>("/api/transactions"),
+        queryKey: [...QUERY_KEY, filters],
+        queryFn: () =>
+            api<Transaction[]>(`/api/transactions${query ? `?${query}` : ""}`),
+        placeholderData: keepPreviousData,
     });
 }
 

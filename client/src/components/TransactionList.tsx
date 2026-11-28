@@ -6,8 +6,11 @@ import { CategoryBadge } from "./CategoryBadge";
 
 export function TransactionList({
     transactions,
+    filtered = false,
 }: {
     transactions: Transaction[];
+    // Hay filtros activos: cambia el mensaje cuando no hay resultados
+    filtered?: boolean;
 }) {
     const deleteTransaction = useDeleteTransaction();
 
@@ -23,11 +26,15 @@ export function TransactionList({
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary dark:text-indigo-300">
                     <Inbox size={20} />
                 </span>
-                <p className="mt-4 text-sm font-medium">
-                    Todavía no tienes transacciones
+                                <p className="mt-4 text-sm font-medium">
+                    {filtered
+                        ? "Ninguna transacción coincide con los filtros"
+                        : "Todavía no tienes transacciones"}
                 </p>
                 <p className="mt-1 text-sm text-muted">
-                    Agrega la primera con el formulario de arriba.
+                    {filtered
+                        ? "Prueba con otros filtros o límpialos."
+                        : "Agrega la primera con el formulario de arriba."}
                 </p>
             </div>
         );

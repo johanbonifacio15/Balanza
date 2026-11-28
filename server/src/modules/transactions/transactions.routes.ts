@@ -3,6 +3,7 @@ import { parseId } from "../../lib/parseId";
 import { prisma } from "../../lib/prisma";
 import {
     createTransactionSchema,
+    listTransactionsQuerySchema,
     updateTransactionSchema,
 } from "./transactions.schemas";
 
@@ -27,10 +28,29 @@ async function categoryBelongsToUser(
     return category !== null;
 }
 
-// GET /api/transactions: lista
+// GET /api/transactions?type=&categoryId=&from=&to=
+// Lista las del usuario, las mas recientes primero, con filtros opcionales
 transactionsRouter.get("/", async (req, res) => {
+    const query = listTransactionsQuerySchema.safeParse(req.query);
+
+    if (!query.success) {
+        res.status(400).json({ error: "Filtros inválidos" });
+        return;
+    }
+
+    const { type, categoryId, from, to } = query.data;
+
     const transactions = await prisma.transaction.findMany({
-        where: { userId: req.userId },
+        where: {
+            userId: req.userId,
+            // Prisma ignora los filtros que llegan como undefined
+            type,
+            categoryId: categoryId === "none" ? null : categoryId,
+            date: {
+                gte: from ? new Date(`${from}T00:00:00.000Z`) : undefined,
+                lte: to ? new Date(`${to}T00:00:00.000Z`) : undefined,
+            },
+        },
         include: withCategory,
         orderBy: [{ date: "desc" }, { id: "desc" }],
     });

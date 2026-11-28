@@ -79,3 +79,10 @@ export type MonthlyStat = {
     income: number;
     expense: number;
 };
+
+export type TransactionFilters = {
+    type: "" | TransactionType;
+    categoryId: string;
+    from: string;
+    to: string;
+};

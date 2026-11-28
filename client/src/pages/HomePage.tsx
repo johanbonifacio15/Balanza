@@ -1,13 +1,22 @@
+import { useState } from "react";
+import { FilterBar } from "../components/FilterBar";
 import { ListSkeleton, SummarySkeleton } from "../components/Skeletons";
 import { Summary } from "../components/Summary";
 import { TransactionForm } from "../components/TransactionForm";
 import { TransactionList } from "../components/TransactionList";
 import { useAuth } from "../context/authContext";
-import { useTransactions } from "../hooks/useTransactions";
+import { EMPTY_FILTERS, useTransactions } from "../hooks/useTransactions";
+import type { TransactionFilters } from "../types";
 
 export function HomePage() {
     const { user } = useAuth();
-    const { data: transactions, isPending, error } = useTransactions();
+    const [filters, setFilters] = useState<TransactionFilters>(EMPTY_FILTERS);
+
+    const all = useTransactions();
+    const filtered = useTransactions(filters);
+
+    const hasFilters = Object.values(filters).some(Boolean);
+    const error = all.error ?? filtered.error;
 
     return (
         <div className="space-y-8 motion-safe:animate-fade-up">
@@ -17,16 +26,25 @@ export function HomePage() {
 
             {error && <p className="text-sm text-expense">{error.message}</p>}
 
-            {isPending && <SummarySkeleton />}
-            {transactions && <Summary transactions={transactions} />}
+            {all.isPending && <SummarySkeleton />}
+            {all.data && <Summary transactions={all.data} />}
 
             <TransactionForm />
 
             <section>
                 <h2 className="mb-3 text-sm font-semibold">Movimientos</h2>
 
-                {isPending && <ListSkeleton />}
-                {transactions && <TransactionList transactions={transactions} />}
+                <div className="space-y-3">
+                    <FilterBar filters={filters} onChange={setFilters} />
+
+                    {filtered.isPending && <ListSkeleton />}
+                    {filtered.data && (
+                        <TransactionList
+                            transactions={filtered.data}
+                            filtered={hasFilters}
+                        />
+                    )}
+                </div>
             </section>
         </div>
     );

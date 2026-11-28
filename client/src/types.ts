@@ -66,3 +66,16 @@ export type NewBudget = {
     amount: number;
     currency: Currency;
 };
+
+export type CategoryStat = {
+    categoryId: number | null;
+    name: string;
+    color: string;
+    total: number;
+};
+
+export type MonthlyStat = {
+    month: string;
+    income: number;
+    expense: number;
+};

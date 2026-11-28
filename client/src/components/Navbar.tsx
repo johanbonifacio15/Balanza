@@ -1,5 +1,10 @@
-import { LayoutList, LogOut, PiggyBank, Tags } from "lucide-react";
-import { NavLink } from "react-router";
+import {
+    LayoutDashboard,
+    LayoutList,
+    LogOut,
+    PiggyBank,
+    Tags,
+} from "lucide-react";import { NavLink } from "react-router";
 import { useAuth } from "../context/authContext";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
@@ -29,6 +34,15 @@ export function Navbar() {
                     >
                         <LayoutList size={18} />
                         <span className="hidden sm:inline">Movimientos</span>
+                    </NavLink>
+
+                                        <NavLink
+                        to="/dashboard"
+                        aria-label="Dashboard"
+                        className={linkClass}
+                    >
+                        <LayoutDashboard size={18} />
+                        <span className="hidden sm:inline">Dashboard</span>
                     </NavLink>
 
                     <NavLink

@@ -17,3 +17,11 @@ export function formatDate(date: string) {
         timeZone: "UTC",
     });
 }
+
+// Mes abreviado para los ejes de las graficas
+export function formatMonthShort(month: string) {
+    return new Date(`${month}-01T00:00:00Z`).toLocaleDateString("es-DO", {
+        month: "short",
+        timeZone: "UTC",
+    });
+}

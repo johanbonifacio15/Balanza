@@ -9,6 +9,7 @@ import { useAuth } from "../context/authContext";
 import { EMPTY_FILTERS, useTransactions } from "../hooks/useTransactions";
 import { primaryButtonClass } from "../lib/styles";
 import type { TransactionFilters } from "../types";
+import { ExportButton } from "../components/ExportButton";
 
 export function HomePage() {
     const { user } = useAuth();
@@ -58,7 +59,16 @@ export function HomePage() {
             )}
 
             <section>
-                <h2 className="mb-3 text-sm font-semibold">Movimientos</h2>
+                <div className="mb-3 flex items-center justify-between gap-4">
+                    <h2 className="text-sm font-semibold">Movimientos</h2>
+
+                    {filtered.data && (
+                        <ExportButton
+                            transactions={filtered.data}
+                            filtered={hasFilters}
+                        />
+                    )}
+                </div>
 
                 <div className="space-y-3">
                     <FilterBar filters={filters} onChange={setFilters} />
